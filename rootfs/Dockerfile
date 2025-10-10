@@ -6,58 +6,58 @@ RUN apt-get update -y && \
     apt-get install -y --no-install-recommends systemd-sysv udev lsb-release cloud-init sudo curl gnupg skopeo && \
     rm -rf /var/lib/apt/lists/*
 
-RUN echo "net.bridge.bridge-nf-call-iptables  = 1 \n\
-net.bridge.bridge-nf-call-ip6tables = 1 \n\
-net.ipv4.ip_forward                 = 1" >> /etc/sysctl.d/k8s.conf
+# RUN echo "net.bridge.bridge-nf-call-iptables  = 1 \n\
+# net.bridge.bridge-nf-call-ip6tables = 1 \n\
+# net.ipv4.ip_forward                 = 1" >> /etc/sysctl.d/k8s.conf
 
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu jammy stable" | tee /etc/apt/sources.list.d/docker.list
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends containerd.io && \
-    rm -rf /var/lib/apt/lists/*
+# RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
+#     echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu jammy stable" | tee /etc/apt/sources.list.d/docker.list
+# RUN apt-get update -y && \
+#     apt-get install -y --no-install-recommends containerd.io && \
+#     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /etc/containerd && containerd config default | sed 's/SystemdCgroup = false/SystemdCgroup = true/' > /etc/containerd/config.toml
-RUN systemctl enable containerd
+# RUN mkdir -p /etc/containerd && containerd config default | sed 's/SystemdCgroup = false/SystemdCgroup = true/' > /etc/containerd/config.toml
+# RUN systemctl enable containerd
 
-RUN KUBERNETES_SERIES="$(echo "${KUBERNETES_VERSION}" | cut -d. -f1,2)" && \
-    install -m 0755 -d /etc/apt/keyrings && \
-    curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg "https://pkgs.k8s.io/core:/stable:/v${KUBERNETES_SERIES}/deb/Release.key" && \
-    echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${KUBERNETES_SERIES}/deb/ /" | tee /etc/apt/sources.list.d/kubernetes.list
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends kubelet kubeadm kubectl && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-mark hold kubelet kubeadm kubectl
+# RUN KUBERNETES_SERIES="$(echo "${KUBERNETES_VERSION}" | cut -d. -f1,2)" && \
+#     install -m 0755 -d /etc/apt/keyrings && \
+#     curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg "https://pkgs.k8s.io/core:/stable:/v${KUBERNETES_SERIES}/deb/Release.key" && \
+#     echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${KUBERNETES_SERIES}/deb/ /" | tee /etc/apt/sources.list.d/kubernetes.list
+# RUN apt-get update -y && \
+#     apt-get install -y --no-install-recommends kubelet kubeadm kubectl && \
+#     rm -rf /var/lib/apt/lists/* && \
+#     apt-mark hold kubelet kubeadm kubectl
 
-RUN systemctl enable kubelet
+# RUN systemctl enable kubelet
 
-RUN echo 'net.ipv4.conf.lxc*.rp_filter = 0' > /etc/sysctl.d/99-override_cilium_rp_filter.conf
+# RUN echo 'net.ipv4.conf.lxc*.rp_filter = 0' > /etc/sysctl.d/99-override_cilium_rp_filter.conf
 
-RUN mkdir -p /usr/share/capch/images && \
-    images=$(kubeadm config images list --kubernetes-version $KUBERNETES_VERSION) && \
-    for image in $images; do \
-        skopeo copy docker://$image oci-archive:/usr/share/capch/images/$(echo $image | sed -r 's/[/:]/_/g').tar:$image; \
-    done
+# RUN mkdir -p /usr/share/capch/images && \
+#     images=$(kubeadm config images list --kubernetes-version $KUBERNETES_VERSION) && \
+#     for image in $images; do \
+#         skopeo copy docker://$image oci-archive:/usr/share/capch/images/$(echo $image | sed -r 's/[/:]/_/g').tar:$image; \
+#     done
 
-RUN update-alternatives --set iptables /usr/sbin/iptables-legacy && \
-    update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+# RUN update-alternatives --set iptables /usr/sbin/iptables-legacy && \
+#     update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 
-FROM smartxworks/virtink-container-rootfs-base AS virtink-container-rootfs
+# FROM smartxworks/virtink-container-rootfs-base AS virtink-container-rootfs
 
-COPY --from=rootfs / /rootfs
+# COPY --from=rootfs / /rootfs
 
-RUN ln -sf ../run/systemd/resolve/stub-resolv.conf /rootfs/etc/resolv.conf
-RUN echo -e "127.0.0.1 localhost \n\
-::1     localhost ip6-localhost ip6-loopback \n\
-fe00::0 ip6-localnet \n\
-fe00::0 ip6-mcastprefix \n\
-fe00::1 ip6-allnodes \n\
-fe00::2 ip6-allrouters" > /rootfs/etc/hosts
+# RUN ln -sf ../run/systemd/resolve/stub-resolv.conf /rootfs/etc/resolv.conf
+# RUN echo -e "127.0.0.1 localhost \n\
+# ::1     localhost ip6-localhost ip6-loopback \n\
+# fe00::0 ip6-localnet \n\
+# fe00::0 ip6-mcastprefix \n\
+# fe00::1 ip6-allnodes \n\
+# fe00::2 ip6-allrouters" > /rootfs/etc/hosts
 
-FROM virtink-container-rootfs AS qcow2-rootfs
-RUN apk add qemu-img
-RUN /entrypoint.sh /rootfs.raw 2G
-RUN qemu-img convert -f raw -O qcow2 /rootfs.raw rootfs.qcow2
+# FROM virtink-container-rootfs AS qcow2-rootfs
+# RUN apk add qemu-img
+# RUN /entrypoint.sh /rootfs.raw 2G
+# RUN qemu-img convert -f raw -O qcow2 /rootfs.raw rootfs.qcow2
 
-FROM kubevirt/container-disk-v1alpha
+# FROM kubevirt/container-disk-v1alpha
 
-COPY --from=qcow2-rootfs /rootfs.qcow2 /disk/rootfs.qcow2
+# COPY --from=qcow2-rootfs /rootfs.qcow2 /disk/rootfs.qcow2
