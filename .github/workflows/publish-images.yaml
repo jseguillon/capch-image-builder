@@ -10,8 +10,11 @@ on:
 
 jobs:
   publish:
-    name: Build and push images
+    name: Build and push ${{ matrix.target }} image
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [push-kernel, push-rootfs]
     permissions:
       contents: read
       packages: write
@@ -46,7 +49,7 @@ jobs:
           echo "capch_rootfs_image=${IMAGE_REPOSITORY}/capch-rootfs-${KUBERNETES_VERSION}" >>"$GITHUB_OUTPUT"
           echo "capch_rootfs_cdi_image=${IMAGE_REPOSITORY}/capch-rootfs-cdi-${KUBERNETES_VERSION}" >>"$GITHUB_OUTPUT"
 
-      - name: Build and push kernel and rootfs images
+      - name: Build and push ${{ matrix.target }}
         env:
           IMAGE_REPOSITORY: ${{ steps.vars.outputs.image_repository }}
           KERNEL_VERSION: ${{ steps.vars.outputs.kernel_version }}
@@ -54,4 +57,4 @@ jobs:
           KUBERNETES_VERSION: ${{ steps.vars.outputs.kubernetes_version }}
           CAPCH_ROOTFS_IMAGE: ${{ steps.vars.outputs.capch_rootfs_image }}
           CAPCH_ROOTFS_CDI_IMAGE: ${{ steps.vars.outputs.capch_rootfs_cdi_image }}
-        run: make push-kernel push-rootfs
+        run: make ${{ matrix.target }}
