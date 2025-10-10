@@ -17,8 +17,8 @@ ENV ARCH=amd64
 ENV K8S_BASE_URL="https://dl.k8s.io/release/${KUBERNETES_VERSION}/bin/linux/${ARCH}"
 
 # Base tools (kept minimal)
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends ca-certificates systemd-sysv udev lsb-release cloud-init sudo curl gnupg skopeo xz-utils iptables && \
+RUN apt update -y && \
+    apt install -y --no-install-recommends ca-certificates systemd-sysv udev lsb-release cloud-init sudo curl gnupg skopeo xz-utils iptables && \
     rm -rf /var/lib/apt/lists/*
 
 # -----------------------------------------------------------------------------
