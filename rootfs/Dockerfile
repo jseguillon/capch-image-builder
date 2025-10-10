@@ -19,10 +19,12 @@ RUN apt-get update -y && \
 RUN mkdir -p /etc/containerd && containerd config default | sed 's/SystemdCgroup = false/SystemdCgroup = true/' > /etc/containerd/config.toml
 RUN systemctl enable containerd
 
-RUN curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+RUN KUBERNETES_SERIES="$(echo "${KUBERNETES_VERSION}" | cut -d. -f1,2)" && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg "https://pkgs.k8s.io/core:/stable:/v${KUBERNETES_SERIES}/deb/Release.key" && \
+    echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${KUBERNETES_SERIES}/deb/ /" | tee /etc/apt/sources.list.d/kubernetes.list
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends kubelet=$KUBERNETES_VERSION-00 kubeadm=$KUBERNETES_VERSION-00 kubectl=$KUBERNETES_VERSION-00 && \
+    apt-get install -y --no-install-recommends kubelet kubeadm kubectl && \
     rm -rf /var/lib/apt/lists/* && \
     apt-mark hold kubelet kubeadm kubectl
 
