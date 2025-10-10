@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 5.15.12 Kernel Configuration
+# Linux/arm64 6.6.32 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 11.3.1 20220421 (Red Hat 11.3.1-2)"
 CONFIG_CC_IS_GCC=y
