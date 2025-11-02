@@ -32,7 +32,7 @@ RUN mkdir -p /etc/containerd && \
 RUN systemctl enable kubelet
 
 RUN rm -Rf /lib/netplan /etc/netplan /run/netplan || true
-COPY netplan.cfg /etc/netplan/51-virtink-netplan.yaml 
+COPY rootfs/netplan.cfg /etc/netplan/51-virtink-netplan.yaml 
 
 RUN rm -f /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg \
     && rm -f /etc/cloud/cloud.cfg.d/99-installer.cfg \
