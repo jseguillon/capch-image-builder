@@ -16,7 +16,7 @@ push-kernel-amd64:
 	docker buildx build --platform linux/amd64 --build-arg KERNEL_VERSION=$(KERNEL_VERSION) -t $(CAPCH_KERNEL_IMAGE) -f kernel/Dockerfile --push .
 
 .PHONY: push-kernel-arm64
-push-kernel-armd64:
+push-kernel-arm64:
 	docker buildx build --platform linux/arm64 --build-arg KERNEL_VERSION=$(KERNEL_VERSION) -t $(CAPCH_KERNEL_IMAGE) -f kernel/Dockerfile --push .
 
 .PHONY: push-rootfs-amd64
