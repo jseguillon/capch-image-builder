@@ -9,16 +9,21 @@ on:
 jobs:
   build:
     name: Build ${{ matrix.target }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
-        target:
-          - push-kernel-amd64
-          - push-kernel-arm64
-          - push-rootfs-amd64
-          - push-rootfs-arm64
-          - push-disk
+        include:
+          - target: push-kernel-amd64
+            runner: ubuntu-24.04
+          - target: push-kernel-arm64
+            runner: ubuntu-24.04-arm
+          - target: push-rootfs-amd64
+            runner: ubuntu-24.04
+          - target: push-rootfs-arm64
+            runner: ubuntu-24.04-arm
+          - target: push-disk
+            runner: ubuntu-24.04
 
     permissions:
       contents: read
@@ -34,7 +39,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to GHCR
+      - name: Login to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -54,7 +59,7 @@ jobs:
           echo "capch_rootfs_image=${IMAGE_REPOSITORY}/capch-rootfs-${KUBERNETES_VERSION}" >>"$GITHUB_OUTPUT"
           echo "capch_rootfs_cdi_image=${IMAGE_REPOSITORY}/capch-rootfs-cdi-${KUBERNETES_VERSION}" >>"$GITHUB_OUTPUT"
 
-      - name: Run Make target
+      - name: Run make target
         env:
           IMAGE_REPOSITORY: ${{ steps.vars.outputs.image_repository }}
           KERNEL_VERSION: ${{ steps.vars.outputs.kernel_version }}
