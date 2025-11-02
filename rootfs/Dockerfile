@@ -12,7 +12,7 @@ net.bridge.bridge-nf-call-ip6tables = 1 \n\
 net.ipv4.ip_forward                 = 1" >> /etc/sysctl.d/k8s.conf
 
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
+    echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
 RUN apt update && \
     apt install -y --no-install-recommends containerd.io && \
     rm -rf /var/lib/apt/lists/*
