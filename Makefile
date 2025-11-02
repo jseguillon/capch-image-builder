@@ -19,13 +19,14 @@ push-kernel-amd64:
 push-kernel-armd64:
 	docker buildx build --platform linux/arm64 --build-arg KERNEL_VERSION=$(KERNEL_VERSION) -t $(CAPCH_KERNEL_IMAGE) -f kernel/Dockerfile --push .
 
-.PHONY: push-rootfs
+.PHONY: push-rootfs-amd64
 push-rootfs-amd64:
 	docker buildx build --platform linux/amd64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
 	  -f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_IMAGE) --target virtink-container-rootfs .
 	docker buildx build --platform linux/amd64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
 		-f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_CDI_IMAGE) .
 
+.PHONY: push-rootfs-arm64
 push-rootfs-arm64:
 	docker buildx build --platform linux/arm64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
 	  -f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_IMAGE) --target virtink-container-rootfs .
