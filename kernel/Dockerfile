@@ -9,7 +9,7 @@ WORKDIR /workspace
 
 RUN git clone --depth 1 https://github.com/cloud-hypervisor/linux.git -b ch-$KERNEL_VERSION linux-cloud-hypervisor
 
-COPY linux-config-* linux-cloud-hypervisor/
+COPY kernel/linux-config-* linux-cloud-hypervisor/
 
 RUN set -eux; \
     cd linux-cloud-hypervisor; \
