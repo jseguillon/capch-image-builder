@@ -31,8 +31,16 @@ RUN mkdir -p /etc/containerd && \
     containerd config default | sed 's/SystemdCgroup = false/SystemdCgroup = true/' > /etc/containerd/config.toml 
 RUN systemctl enable kubelet
 
-RUN rm -Rf /lib/netplan /etc/netplan /run/netplan || true
-COPY rootfs/netplan.cfg /etc/netplan/51-virtink-netplan.yaml 
+RUN rm -Rf /lib/netplan/* /etc/netplan/* /run/netplan/* || true
+
+RUN echo -e "---\n\
+network: \n\
+  version: 2\n\
+  ethernets:\n\
+    id0:\n\
+      match:\n\
+        name: enp*s*\n\
+      dhcp4: true\n" >/etc/netplan/51-virtink-netplan.yaml 
 
 RUN rm -f /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg \
     && rm -f /etc/cloud/cloud.cfg.d/99-installer.cfg \
