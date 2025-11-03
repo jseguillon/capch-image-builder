@@ -17,32 +17,32 @@ all: push-kernel-amd64 push-kernel-arm4  push-rootfs-amd64 push-rootfs-arm64 pus
 
 .PHONY: push-kernel-amd64
 push-kernel-amd64:
-	docker buildx build --platform linux/amd64 --build-arg KERNEL_VERSION=$(KERNEL_VERSION) -t $(CAPCH_KERNEL_IMAGE) -f kernel/Dockerfile --push .
+	docker buildx build --platform linux/amd64 --build-arg KERNEL_VERSION=$(KERNEL_VERSION) -t $(CAPCH_KERNEL_IMAGE)-amd64 -f kernel/Dockerfile --push .
 
 .PHONY: push-kernel-arm64
 push-kernel-arm64:
-	docker buildx build --platform linux/arm64 --build-arg KERNEL_VERSION=$(KERNEL_VERSION) -t $(CAPCH_KERNEL_IMAGE) -f kernel/Dockerfile --push .
+	docker buildx build --platform linux/arm64 --build-arg KERNEL_VERSION=$(KERNEL_VERSION) -t $(CAPCH_KERNEL_IMAGE)-arm64 -f kernel/Dockerfile --push .
 
 .PHONY: push-rootfs-amd64
 push-rootfs-amd64:
 	docker buildx build --platform linux/amd64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
-	  -f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_IMAGE) --target virtink-container-rootfs .
+	  -f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_IMAGE)-amd64 --target virtink-container-rootfs .
 	docker buildx build --platform linux/amd64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
-		-f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_CDI_IMAGE) .
+		-f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_CDI_IMAGE)-amd64 .
 
 .PHONY: push-rootfs-amd64-cilium
 push-rootfs-amd64-cilium:
 	docker buildx build --platform linux/amd64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
-	  -f rootfs-cilium/Dockerfile --push -t $(CAPCH_ROOTFS_CILIUM_IMAGE) --target virtink-container-rootfs .
+	  -f rootfs-cilium/Dockerfile --push -t $(CAPCH_ROOTFS_CILIUM_IMAGE)-amd64 --target virtink-container-rootfs .
 	docker buildx build --platform linux/amd64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
-		-f rootfs-cilium/Dockerfile --push -t $(CAPCH_ROOTFS_CILIUM_CDI_IMAGE) .
+		-f rootfs-cilium/Dockerfile --push -t $(CAPCH_ROOTFS_CILIUM_CDI_IMAGE)-amd64 .
 
 .PHONY: push-rootfs-arm64
 push-rootfs-arm64:
 	docker buildx build --platform linux/arm64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
-	  -f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_IMAGE) --target virtink-container-rootfs .
+	  -f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_IMAGE)-arm64 --target virtink-container-rootfs .
 	docker buildx build --platform linux/arm64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
-		-f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_CDI_IMAGE) .
+		-f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_CDI_IMAGE)-arm64 .
 
 .PHONY: push-disk
 push-disk:
