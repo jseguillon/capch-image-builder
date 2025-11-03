@@ -22,6 +22,8 @@ jobs:
             runner: ubuntu-24.04
           - target: push-rootfs-arm64
             runner: ubuntu-24.04-arm
+          - target: push-rootfs-amd64-cilium
+            runner: ubuntu-24.04
           - target: push-disk
             runner: ubuntu-24.04
 

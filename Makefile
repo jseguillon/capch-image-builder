@@ -5,6 +5,10 @@ KUBERNETES_VERSION ?= 1.33
 KUBERNETES_DEB_VERSION ?=1.33.5-1.1
 CAPCH_ROOTFS_IMAGE ?= $(IMAGE_REPOSITORY)/capch-rootfs-$(KUBERNETES_VERSION)
 CAPCH_ROOTFS_CDI_IMAGE ?= $(IMAGE_REPOSITORY)/capch-rootfs-cdi-$(KUBERNETES_VERSION)
+
+CAPCH_ROOTFS_CILIUM_IMAGE ?= $(IMAGE_REPOSITORY)/capch-rootfs-cilium-$(KUBERNETES_VERSION)
+CAPCH_ROOTFS_CILIUM_CDI_IMAGE ?= $(IMAGE_REPOSITORY)/capch-rootfs-cdi-cilium-$(KUBERNETES_VERSION)
+
 CAPCH_DISK_SUDO_PASSWORD ?= password
 CAPCH_DISK_IMAGE ?= $(IMAGE_REPOSITORY)/capch-disk-$(KUBERNETES_VERSION)
 CAPCH_DISK_CDI_IMAGE ?= $(IMAGE_REPOSITORY)/capch-disk-cdi-$(KUBERNETES_VERSION)
@@ -25,6 +29,13 @@ push-rootfs-amd64:
 	  -f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_IMAGE) --target virtink-container-rootfs .
 	docker buildx build --platform linux/amd64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
 		-f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_CDI_IMAGE) .
+
+.PHONY: push-rootfs-amd64-cilium
+push-rootfs-amd64-cilium:
+	docker buildx build --platform linux/amd64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
+	  -f rootfs-cilium/Dockerfile --push -t $(CAPCH_ROOTFS_CILIUM_IMAGE) --target virtink-container-rootfs .
+	docker buildx build --platform linux/amd64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
+		-f rootfs-cilium/Dockerfile --push -t $(CAPCH_ROOTFS_CILIUM_CDI_IMAGE) .
 
 .PHONY: push-rootfs-arm64
 push-rootfs-arm64:
