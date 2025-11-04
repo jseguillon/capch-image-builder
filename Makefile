@@ -30,6 +30,13 @@ push-rootfs-amd64:
 	docker buildx build --platform linux/amd64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
 		-f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_CDI_IMAGE)-amd64 .
 
+.PHONY: push-rootfs-arm64
+push-rootfs-arm64:
+	docker buildx build --platform linux/arm64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
+	  -f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_IMAGE)-arm64 --target virtink-container-rootfs .
+	docker buildx build --platform linux/arm64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
+		-f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_CDI_IMAGE)-arm64 .
+
 .PHONY: push-rootfs-amd64-cilium
 push-rootfs-amd64-cilium:
 	docker buildx build --platform linux/amd64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
@@ -37,12 +44,12 @@ push-rootfs-amd64-cilium:
 	docker buildx build --platform linux/amd64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
 		-f rootfs-cilium/Dockerfile --push -t $(CAPCH_ROOTFS_CILIUM_CDI_IMAGE)-amd64 .
 
-.PHONY: push-rootfs-arm64
-push-rootfs-arm64:
+.PHONY: push-rootfs-amd64-cilium
+push-rootfs-arm64-cilium:
 	docker buildx build --platform linux/arm64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
-	  -f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_IMAGE)-arm64 --target virtink-container-rootfs .
+	  -f rootfs-cilium/Dockerfile --push -t $(CAPCH_ROOTFS_CILIUM_IMAGE)-arm64 --target virtink-container-rootfs .
 	docker buildx build --platform linux/arm64 --build-arg KUBERNETES_VERSION=$(KUBERNETES_VERSION) --build-arg KUBERNETES_DEB_VERSION=${KUBERNETES_DEB_VERSION} \
-		-f rootfs/Dockerfile --push -t $(CAPCH_ROOTFS_CDI_IMAGE)-arm64 .
+		-f rootfs-cilium/Dockerfile --push -t $(CAPCH_ROOTFS_CILIUM_CDI_IMAGE)-arm64 .
 
 .PHONY: push-disk
 push-disk:
